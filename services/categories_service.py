@@ -1,5 +1,5 @@
 from data.models import Category
-from data.database import read_query,insert_query,update_query
+from data.database import read_query,insert_query,update_query, query_count
 
 def get_all(name):
     sql = '''SELECT id, name, type FROM categories'''
@@ -30,3 +30,6 @@ def create(category: Category):
 
     category.id = generated_id
     return category
+
+def name_exists(name: str):
+    return query_count('SELECT COUNT(*) from categories WHERE name = ?', (name,)) > 0
