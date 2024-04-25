@@ -19,7 +19,7 @@ def get_category_by_id(id:int):
 
 
 @categories_router.post('/', status_code=201)
-def create_topic(category: Category):
+def create_category(category: Category):
     if categories_service.name_exists(category.name):
         return JSONResponse(status_code=409, content={'detail': 'Category name must be unique!'})
 

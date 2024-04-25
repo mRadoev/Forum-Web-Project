@@ -3,7 +3,7 @@ from data.database import insert_query, read_query, update_query, query_count
 
 
 def get_all(title=None):
-    sql = '''Select id, title, topicscol FROM topics'''
+    sql = '''Select id, title, description FROM topics'''
 
     where_clauses = []
     if title:
@@ -17,13 +17,13 @@ def get_all(title=None):
 
 
 def get_by_id(id: int):
-    data = read_query('Select id, title, topicscol FROM topics WHERE id = ?', (id,))
+    data = read_query('Select id, title, description FROM topics WHERE id = ?', (id,))
     return Topic.from_query_result(*data[0]) if data else None
 
 
 def create(topic: Topic):
-    generated_id = insert_query('INSERT INTO topics(title, topicscol) VALUES(?,?)',
-                                (topic.title, topic.topicscol))
+    generated_id = insert_query('INSERT INTO topics(title, description) VALUES(?,?)',
+                                (topic.title, topic.description))
 
     topic.id = generated_id
 

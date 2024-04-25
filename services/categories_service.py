@@ -31,5 +31,6 @@ def create(category: Category):
     category.id = generated_id
     return category
 
+
 def name_exists(name: str):
     return query_count('SELECT COUNT(*) from categories WHERE name = ?', (name,)) > 0

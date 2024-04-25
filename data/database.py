@@ -1,19 +1,15 @@
 from mariadb import connect
 from mariadb.connections import Connection
+import sqlite3
 
 
-def _get_connection() -> Connection:
-    return connect(
-        user='root',
-        password='root',
-        host='localhost',
-        port=3306,
-        database='forum_database'
-    )
+_db_file= './data/dbfile.db'
+#TODO: FIX DATABASE CONNECTION, NOT WORKING
+sql_script_file = './sql/forum_dataBase_script.sql'
 
 
 def read_query(sql: str, sql_params=()):
-    with _get_connection() as conn:
+    with connect(_db_file) as conn:
         cursor = conn.cursor()
         cursor.execute(sql, sql_params)
 
@@ -21,7 +17,7 @@ def read_query(sql: str, sql_params=()):
 
 
 def insert_query(sql: str, sql_params=()) -> int:
-    with _get_connection() as conn:
+    with connect(_db_file) as conn:
         cursor = conn.cursor()
         cursor.execute(sql, sql_params)
         conn.commit()
@@ -30,7 +26,7 @@ def insert_query(sql: str, sql_params=()) -> int:
 
 
 def update_query(sql: str, sql_params=()) -> bool:
-    with _get_connection() as conn:
+    with connect(_db_file) as conn:
         cursor = conn.cursor()
         cursor.execute(sql, sql_params)
         conn.commit()
@@ -39,8 +35,25 @@ def update_query(sql: str, sql_params=()) -> bool:
 
 
 def query_count(sql: str, sql_params=()):
-    with _get_connection() as conn:
+    with connect(_db_file) as conn:
         cursor = conn.cursor()
         cursor.execute(sql, sql_params)
 
         return cursor.fetchone()[0]
+
+
+def import_sql_script():
+    # Connect to SQLite database
+    conn = sqlite3.connect(_db_file)
+    cursor = conn.cursor()
+
+    # Read SQL script
+    with open(sql_script_file, 'r') as file:
+        sql_script = file.read()
+
+    # Execute SQL script
+    cursor.executescript(sql_script)
+
+    # Commit changes and close connection
+    conn.commit()
+    conn.close()
