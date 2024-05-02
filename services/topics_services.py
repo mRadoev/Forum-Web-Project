@@ -1,5 +1,5 @@
 from data.models import Topic, Category
-from data.database import insert_query, read_query, update_query, query_count
+from data.database import insert_query, read_query, update_query
 
 
 def get_all(title=None):
@@ -36,4 +36,4 @@ def assign_to_category(category_id: int, topic_id: int):
 
 
 def title_exists(title: str):
-    return query_count('SELECT COUNT(*) from topics WHERE title = ?', (title,)) > 0
+    return read_query('SELECT COUNT(*) from topics WHERE title = ?', (title,))
