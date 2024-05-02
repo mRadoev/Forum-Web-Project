@@ -7,7 +7,6 @@ class Category(BaseModel):
     type: constr(pattern='^private|public$')
     topics: list = []
 
-
     @classmethod
     def from_query_result(cls, id, name, is_public, topics=None):
         return cls(
@@ -31,3 +30,25 @@ class Topic(BaseModel):
             title=title,
             description=description,
             categories=categories or [])
+
+
+class LoginData(BaseModel):
+    username: str
+    password: str
+    email: str
+
+
+class User(BaseModel):
+    username: str
+    password: str
+    email: str
+
+    # def is_admin(self):
+    #     return self.role == Role.ADMIN
+
+    @classmethod
+    def from_query_result(cls, username, password, email):
+        return cls(
+            username=username,
+            password=password,
+            email=email)
