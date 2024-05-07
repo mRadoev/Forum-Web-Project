@@ -36,4 +36,8 @@ def assign_to_category(category_id: int, topic_id: int):
 
 
 def title_exists(title: str):
-    return read_query('SELECT COUNT(*) from topics WHERE title = ?', (title,))
+    data = read_query('SELECT COUNT(*) from topics WHERE title = ?', (title,))
+    if data == [(0,)]:
+        return False
+
+    return True

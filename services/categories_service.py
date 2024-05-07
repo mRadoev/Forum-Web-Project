@@ -33,4 +33,8 @@ def create(category: Category):
 
 
 def name_exists(name: str):
-    return read_query('SELECT COUNT(*) from categories WHERE name = ?', (name,))
+    data = read_query('SELECT COUNT(*) from categories WHERE name = ?', (name,))
+    if data == [(0,)]:
+        return False
+
+    return True

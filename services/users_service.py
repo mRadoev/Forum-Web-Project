@@ -5,6 +5,7 @@ import mariadb
 import jwt
 
 
+
 _SEPARATOR = ';'
 
 # passwords should be secured as hashstrings in DB
@@ -15,7 +16,7 @@ _SEPARATOR = ';'
 
 def find_by_username(username: str) -> User | None:
     data = read_query(
-        'SELECT id, username, password, role FROM users WHERE username = ?',
+        'SELECT id, username, password, email FROM users WHERE username = ?',
         (username,))
 
     return next((User.from_query_result(*row) for row in data), None)
@@ -35,7 +36,7 @@ def create(username: str, password: str, email: str) -> User | None:
             'INSERT INTO users(username, password, email) VALUES (?,?,?)',
             (username, password, email))
 
-        return User(id=generated_id, username=username, password='')
+        return User(id=generated_id, username=username, password='', email=email)
 
     except IntegrityError:
         # mariadb raises this error when a constraint is violated
@@ -53,7 +54,7 @@ def create_token(user: User) -> str:
     # Note: Replace 'your_secret_key' with a secure secret key
     token = jwt.encode(payload, 'secret_key', algorithm='HS256')
 
-    return token.decode('utf-8')
+    return token.encode('utf-8')
 
 
 def decode_token(token: str) -> dict:
@@ -62,14 +63,11 @@ def decode_token(token: str) -> dict:
     return payload
 
 
-def find_by_id_and_username(connection, user_id: int, username: str) -> bool:
+def find_by_id_and_username(user_id: int, username: str) -> bool:
     try:
-        cursor = connection.cursor()
         # Execute a SELECT query to check if the user exists
         query = "SELECT id FROM users WHERE id = %s AND username = %s"
-        cursor.execute(query, (user_id, username))
-        result = cursor.fetchone()
-        cursor.close()
+        result = read_query(query, (user_id,username))
 
         return result is not None
 
@@ -85,7 +83,7 @@ def is_authenticated(token: str) -> bool:
         user_id = payload.get('id')
         username = payload.get('username')
 
-        user_exists = find_by_id_and_username(user_id, username)
+        user_exists = find_by_id_and_username(user_id, username,)
 
         return user_exists
 

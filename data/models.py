@@ -39,6 +39,7 @@ class LoginData(BaseModel):
 
 
 class User(BaseModel):
+    id: int | None
     username: str
     password: str
     email: str
@@ -47,8 +48,9 @@ class User(BaseModel):
     #     return self.role == Role.ADMIN
 
     @classmethod
-    def from_query_result(cls, username, password, email):
+    def from_query_result(cls, id, username, password, email):
         return cls(
+            id=id,
             username=username,
             password=password,
             email=email)
