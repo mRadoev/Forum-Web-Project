@@ -21,15 +21,16 @@ class Topic(BaseModel):
     id: int | None
     title: constr(min_length=1)
     description: constr(min_length=1)
-    categories: list = []
+    category_id: str | int
 
     @classmethod
-    def from_query_result(cls,id,title,description, categories=None):
+    def from_query_result(cls, id, title, description, category_id):
         return cls(
             id=id,
             title=title,
             description=description,
-            categories=categories or [])
+            category_id=category_id
+        )
 
 
 class LoginData(BaseModel):
