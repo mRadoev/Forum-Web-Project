@@ -1,4 +1,4 @@
-from data.models import Category
+from data.models import Category, Topic
 from data.database import read_query,insert_query,update_query
 
 def get_all(name):
@@ -20,7 +20,10 @@ def get_by_id(id: int):
     if not raw:
         return None
 
-    return Category.from_query_result(*raw)
+    topics_sql = read_query('''Select id, title, description, categories_id 
+    FROM topics WHERE categories_id = ? ''', (id, ))
+
+    return Category.from_query_result(*raw[0],[Topic.from_query_result(*row) for row in topics_sql])
 
 
 def create(category: Category):

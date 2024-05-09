@@ -3,7 +3,7 @@ from data.models import User
 from mariadb import IntegrityError
 import mariadb
 import jwt
-
+from flask import make_response, request
 
 
 _SEPARATOR = ';'
@@ -97,6 +97,13 @@ def is_authenticated(token: str) -> bool:
 
 
 def from_token(token: str) -> User | None:
-    _, username = token.split(_SEPARATOR)
+    username = token.split(_SEPARATOR)
 
-    return find_by_username(username)
+    return find_by_username(*username)
+
+def name_exists(name: str):
+    data = read_query('SELECT COUNT(*) from users WHERE username = ?', (name,))
+    if data == [(0,)]:
+        return False
+
+    return True

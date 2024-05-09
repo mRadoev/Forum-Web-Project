@@ -11,8 +11,9 @@ categories_router = APIRouter(prefix='/category')
 def get_categories(name: str | None = None):
     return categories_service.get_all(name)
 
+
 @categories_router.get('/{id}')
-def get_category_by_id(id:int):
+def get_category_by_id(id: int):
     category = categories_service.get_by_id(id)
 
     return category or responses.NotFound
@@ -20,6 +21,7 @@ def get_category_by_id(id:int):
 
 @categories_router.post('/', status_code=201)
 def create_category(category: Category):
+
     if categories_service.name_exists(category.name):
         return JSONResponse(status_code=409, content={'detail': 'Category name must be unique!'})
 
