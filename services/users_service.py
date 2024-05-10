@@ -100,6 +100,7 @@ def logged_in():
     return 'user_id' in session
 
 
+
 def from_token(token: str) -> User | None:
     username = token.split(_SEPARATOR)
 
@@ -111,3 +112,11 @@ def name_exists(name: str):
         return False
 
     return True
+
+
+
+def give_user_info(user_id: int):
+    data = read_query('SELECT id, username, password, email FROM users WHERE id = ?', (user_id, ))
+
+
+    return [User.from_query_result(*row) for row in data]

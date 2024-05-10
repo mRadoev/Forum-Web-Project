@@ -42,16 +42,28 @@ class Reply(BaseModel):
     name: constr(min_length=1)
     description: constr(min_length=1)
     topics_id: Optional[int] = None
+    votes: list = []
 
     @classmethod
-    def from_query_result(cls, id, name, topics_id, description):
+    def from_query_result(cls, id, name, topics_id, description, votes=None):
         return cls(
             id=id,
             name=name,
             description=description,
             topics_id=topics_id,
+            votes=votes or []
         )
 
+
+class Vote(BaseModel):
+    type: conint(ge=0, le=1)
+
+    @classmethod
+    def from_query_result(cls, likes, dislikes):
+        return cls(
+            likes=likes,
+            dislikes=dislikes
+        )
 
 class LoginData(BaseModel):
     username: str

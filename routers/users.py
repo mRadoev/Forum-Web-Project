@@ -30,6 +30,7 @@ def register(data: LoginData):
 
 @users_router.get('/info')
 def user_info(x_token: str = Header()):
-    user = get_user_or_raise_401(x_token)
+    get_user_or_raise_401(x_token)
+    data = users_service.decode_token(x_token)
 
-    return User.from_query_result(user)
+    return users_service.give_user_info(data.get("id"))
