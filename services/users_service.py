@@ -3,7 +3,7 @@ from data.models import User
 from mariadb import IntegrityError
 import mariadb
 import jwt
-from flask import make_response, request
+from flask import session
 
 
 _SEPARATOR = ';'
@@ -94,6 +94,10 @@ def is_authenticated(token: str) -> bool:
     except jwt.InvalidTokenError:
         # invalid token error
         return False
+
+
+def logged_in():
+    return 'user_id' in session
 
 
 def from_token(token: str) -> User | None:

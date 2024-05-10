@@ -1,5 +1,6 @@
 from pydantic import BaseModel, constr, conint, Field
 from typing import Optional
+from datetime import datetime
 
 
 class Category(BaseModel):
@@ -55,6 +56,7 @@ class Reply(BaseModel):
 class LoginData(BaseModel):
     username: str
     password: str
+    email: str
 
 
 class User(BaseModel):
@@ -73,3 +75,19 @@ class User(BaseModel):
             username=username,
             password=password,
             email=email)
+
+
+class Message:
+    def __init__(self, id: int, sender_id: int, recipient_id: int, message: str, timestamp: datetime):
+        self.id = id
+        self.sender_id = sender_id
+        self.recipient_id = recipient_id
+        self.message = message
+        self.timestamp = timestamp
+
+    @classmethod
+    def from_query_result(cls, id: int, sender_id: int, recipient_id: int, message: str, timestamp: datetime):
+        return cls(id, sender_id, recipient_id, message, timestamp)
+
+    def __repr__(self):
+        return f"Message(id={self.id}, sender_id={self.sender_id}, recipient_id={self.recipient_id}, message={self.message}, timestamp={self.timestamp})"
