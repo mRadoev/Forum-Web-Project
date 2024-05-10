@@ -15,10 +15,10 @@ def create_reply(reply: Reply, topic_id: int, user_id:int):
 
 def vote_to_reply(vote: Vote, reply_id: int, user_id: int):
 
-    query = insert_query('INSERT INTO votes(type, users_id, replies_id) VALUES(?,?,?)',
+    insert_query('INSERT INTO votes(type, users_id, replies_id) VALUES(?,?,?)',
                          (vote.type, user_id, reply_id))
-    vote.type = query
-    return vote
+
+    return "liked" if vote.type == 1 else "disliked"
 
 
 def update_vote(vote: Vote, reply_id: int, user_id: int):
