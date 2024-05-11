@@ -23,6 +23,10 @@ def login(data: LoginData):
 def register(data: LoginData):
     if users_service.name_exists(data.username):
         return BadRequest(f'Username {data.username} is taken.')
+
+    if users_service.email_exists(data.email):
+        return BadRequest(f'This email: {data.email} has been used in previous registration.')
+
     user = users_service.create(data.username, data.password, data.email)
 
     return user

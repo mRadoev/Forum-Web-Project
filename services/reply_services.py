@@ -22,7 +22,13 @@ def vote_to_reply(vote: Vote, reply_id: int, user_id: int):
 
 
 def update_vote(vote: Vote, reply_id: int, user_id: int):
-    return NotImplementedError
+    update = update_query('UPDATE votes SET type = ? WHERE users_id = ? and replies_id = ?',
+                          (vote.type, user_id, reply_id))
+
+    if not update:
+        return None
+
+    return update
 
 
 def get_reply_info(reply_id:int):
@@ -41,3 +47,13 @@ def check_id_existence(id: int):
         return True
 
     return False
+
+
+def check_reply_vote_existence(user_id: int, reply_id: int):
+    data = read_query('SELECT COUNT(*) from votes WHERE users_id = ? AND replies_id = ?',
+                      (user_id, reply_id))
+
+    if data == [(0,)]:
+        return False
+
+    return True

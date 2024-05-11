@@ -16,6 +16,9 @@ def give_vote(vote: Vote, reply_id: int,  x_token: str = Header()):
     if reply_services.check_id_existence(reply_id):
         return JSONResponse(status_code=404, content={'detail': 'Reply with this id was not found'})
 
+    if reply_services.check_reply_vote_existence(data.get("id"), reply_id):
+        return responses.BadRequest("You already voted to that reply!")
+
     return reply_services.vote_to_reply(vote, reply_id, data.get("id"))
 
 
@@ -26,7 +29,12 @@ def update_vote(vote: Vote, reply_id: int,  x_token: str = Header()):
     if reply_services.check_id_existence(reply_id):
         return JSONResponse(status_code=404, content={'detail': 'Reply with this id was not found'})
 
-    return reply_services.update_vote(vote, reply_id, data.get("id"))
+    update = reply_services.update_vote(vote, reply_id, data.get("id"))
+    if update is None:
+        return responses.BadRequest("Check info you've given, or check if you have voted on this particular reply")
+
+    if update == 1:
+        return "You successfully updated your vote."
 
 @replies_router.get('/{reply_id}')
 def reply_info(reply_id: int):
@@ -34,5 +42,4 @@ def reply_info(reply_id: int):
         return JSONResponse(status_code=404, content={'detail': 'Reply with this id was not found'})
 
     return reply_services.get_reply_info(reply_id)
-
 

@@ -10,13 +10,16 @@ topics_router = APIRouter(prefix='/topics')
 
 
 @topics_router.get('/')
-def get_topics(name: str | None = None):
-    return topics_services.get_all(name)
+def get_topics(title: str | None = None, search: str = None, sort_by: str = None, page: int = 1, size: int = 10):
+    return topics_services.get_all(title, search, sort_by, page, size)
 
 
 @topics_router.get('/{id}')
 def get_topics_by_id(id: int):
     topic = topics_services.get_by_id(id)
+
+    if topic is None:
+        return responses.BadRequest("Invalid or not existing topic id")
 
     return topic or responses.NotFound
 

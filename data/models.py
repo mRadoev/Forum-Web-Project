@@ -65,10 +65,11 @@ class Vote(BaseModel):
             dislikes=dislikes
         )
 
+
 class LoginData(BaseModel):
     username: str
     password: str
-    email: str
+    email: Optional[str] = None
 
 
 class User(BaseModel):
