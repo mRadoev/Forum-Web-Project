@@ -12,7 +12,7 @@
 Token-based authentication for users using JWT (JSON Web Tokens) for generating and verifying tokens.
 
 - Token endpoint for user login and registration
-- Ensures unique users
+- Ensures unique user's username and email.
 
 ### Forum Functionality
 
@@ -31,15 +31,13 @@ Token-based authentication for users using JWT (JSON Web Tokens) for generating 
 
 ### Voting System
 
-- Endpoints to allow users to upvote replies
+- Endpoints to allow users to like/dislike replies
 - Logic to prevent users from upvoting a reply multiple times
 
 ### Best Reply Feature
 
-- Endpoint for the topic author to choose the best reply for their topic
+- Endpoint for choosing topic's best reply
 - Only the topic author can select the best reply
 
 ### Testing
-
-- Unit tests for each endpoint to ensure they behave as expected
 - Postman tests
