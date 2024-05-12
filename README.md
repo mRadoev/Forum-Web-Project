@@ -16,9 +16,12 @@ Token-based authentication for users using JWT (JSON Web Tokens) for generating 
 
 ### Forum Functionality
 
-- Endpoints to create, read, update, and delete topics and replies
-- Implementation of categories
-- Administrators can manage users, topics, and categories
+- Endpoints to create topics and replies
+- Endpoints to view categories and topics + search, sort_by, pagination options
+- Endpoints to view replies and their votes
+- Voting functionality (like/dislike)
+- Only authenticated users can vote, create replies and topics.
+- Creator of topic can choose the best reply to his topic.
 
 ### Messaging System
 
