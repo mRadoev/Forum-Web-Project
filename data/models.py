@@ -25,15 +25,17 @@ class Topic(BaseModel):
     description: constr(min_length=1)
     category_id: str | int
     replies: list = []
+    best_reply: list = []
 
     @classmethod
-    def from_query_result(cls, id, title, description, category_id, replies=None):
+    def from_query_result(cls, id, title, description, category_id, replies=None, best_reply=None):
         return cls(
             id=id,
             title=title,
             description=description,
             category_id=category_id,
-            replies=replies or []
+            replies=replies or [],
+            best_reply=best_reply or []
         )
 
 

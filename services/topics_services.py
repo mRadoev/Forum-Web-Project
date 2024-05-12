@@ -45,7 +45,16 @@ def get_by_id(id: int):
     reply_sql = read_query('''Select id, name, topics_id, description 
     FROM replies WHERE topics_id = ? ''', (id, ))
 
-    return Topic.from_query_result(*data[0],[Reply.from_query_result(*row) for row in reply_sql])
+    best_reply_id_sql = read_query('Select best_reply_id from topics where id = ?',
+                                (id, ))
+    best_reply_id = best_reply_id_sql[0][0]
+    if best_reply_id is None:
+        return Topic.from_query_result(*data[0], [Reply.from_query_result(*row) for row in reply_sql])
+    else:
+        best_reply_sql = read_query('SELECT id, name, topics_id, description FROM replies WHERE id = ? ',
+                                (best_reply_id,))
+        return Topic.from_query_result(*data[0], [Reply.from_query_result(*row) for row in reply_sql],
+                                        [Reply.from_query_result(*best_reply_sql[0])])
 
 
 def get_by_category_id(category_id: int):
@@ -70,3 +79,29 @@ def title_exists(title: str):
         return False
 
     return True
+
+
+def best_reply(topic_id, reply_id, user_id):
+    set_best_reply = update_query('UPDATE topics SET best_reply_id = ? WHERE id = ? and users_id = ?',
+                             (reply_id, topic_id, user_id))
+
+    if set_best_reply == 1:
+        return "You successfully chose the topic's best reply."
+
+def check_topic_creator(topic_id, user_id):
+    check_if_topic_creator = read_query('SELECT COUNT(*) from topics WHERE users_id = ? AND id = ?',
+                                (user_id, topic_id))
+
+    if check_if_topic_creator == [(0,)]:
+        return True
+
+    return False
+
+def check_reply_topic_connection(topic_id, reply_id):
+    check_reply_from_topic = read_query('SELECT COUNT(*) from replies WHERE topics_id = ? AND id = ?',
+                                        (topic_id, reply_id))
+
+    if check_reply_from_topic == [(0,)]:
+        return True
+
+    return False
