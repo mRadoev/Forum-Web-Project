@@ -23,6 +23,10 @@ def login(data: LoginData):
 def register(data: LoginData):
     if users_service.name_exists(data.username):
         return BadRequest(f'Username {data.username} is taken.')
+
+    if users_service.email_exists(data.email):
+        return BadRequest(f'This email: {data.email} has been used in previous registration.')
+
     user = users_service.create(data.username, data.password, data.email)
 
     return user
@@ -30,6 +34,7 @@ def register(data: LoginData):
 
 @users_router.get('/info')
 def user_info(x_token: str = Header()):
-    user = get_user_or_raise_401(x_token)
+    get_user_or_raise_401(x_token)
+    data = users_service.decode_token(x_token)
 
-    return User.from_query_result(user)
+    return users_service.give_user_info(data.get("id"))

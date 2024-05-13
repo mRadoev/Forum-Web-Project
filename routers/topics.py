@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query, Response, Header
 from services import topics_services, reply_services, users_service
 from common import responses
-from data.models import Topic, Reply
+from data.models import Topic, Reply, Vote
 from fastapi.responses import JSONResponse
 from common.auth import get_user_or_raise_401
 
@@ -10,13 +10,16 @@ topics_router = APIRouter(prefix='/topics')
 
 
 @topics_router.get('/')
-def get_topics(name: str | None = None):
-    return topics_services.get_all(name)
+def get_topics(title: str | None = None, search: str = None, sort_by: str = None, page: int = 1, size: int = 10):
+    return topics_services.get_all(title, search, sort_by, page, size)
 
 
 @topics_router.get('/{id}')
 def get_topics_by_id(id: int):
     topic = topics_services.get_by_id(id)
+
+    if topic is None:
+        return responses.BadRequest("Invalid or not existing topic id")
 
     return topic or responses.NotFound
 
@@ -43,3 +46,26 @@ def create_reply(reply: Reply, topic_id: int,  x_token: str = Header()):
     get_user_or_raise_401(x_token)
     data = users_service.decode_token(x_token)
     return reply_services.create_reply(reply, topic_id, data.get("id"))
+
+
+# @topics_router.post('/{topic_id}/vote/{reply_id}')
+# def give_vote(vote: Vote, reply_id: int,  x_token: str = Header()):
+#     get_user_or_raise_401(x_token)
+#     data = users_service.decode_token(x_token)
+#     return reply_services.vote_to_reply(vote, reply_id, data.get("id"))
+
+@topics_router.post('/{topic_id}/{reply_id}/best_reply')
+def choose_best_reply(topic_id: int, reply_id: int, x_token: str = Header()):
+    get_user_or_raise_401(x_token)
+    data = users_service.decode_token(x_token)
+    user_id = data.get("id")
+    if topics_services.check_topic_creator(topic_id, user_id):
+        return responses.BadRequest("You are not the creator of this topic!")
+
+    if topics_services.check_reply_topic_connection(topic_id, reply_id):
+        return responses.BadRequest("This reply is not related to that topic!")
+
+    return topics_services.best_reply(topic_id, reply_id, user_id)
+
+
+

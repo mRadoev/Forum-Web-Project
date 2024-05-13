@@ -71,7 +71,7 @@ class Vote(BaseModel):
 class LoginData(BaseModel):
     username: str
     password: str
-    email: str
+    email: Optional[str] = None
 
 
 class User(BaseModel):

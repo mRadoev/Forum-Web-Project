@@ -5,8 +5,8 @@ import mariadb
 import jwt
 from flask import session
 
-
 _SEPARATOR = ';'
+
 
 # passwords should be secured as hashstrings in DB
 # def _hash_password(password: str):
@@ -67,7 +67,7 @@ def find_by_id_and_username(user_id: int, username: str) -> bool:
     try:
         # Execute a SELECT query to check if the user exists
         query = "SELECT id FROM users WHERE id = %s AND username = %s"
-        result = read_query(query, (user_id,username))
+        result = read_query(query, (user_id, username))
 
         return result is not None
 
@@ -83,7 +83,7 @@ def is_authenticated(token: str) -> bool:
         user_id = payload.get('id')
         username = payload.get('username')
 
-        user_exists = find_by_id_and_username(user_id, username,)
+        user_exists = find_by_id_and_username(user_id, username, )
 
         return user_exists
 
@@ -105,9 +105,24 @@ def from_token(token: str) -> User | None:
 
     return find_by_username(*username)
 
+
 def name_exists(name: str):
     data = read_query('SELECT COUNT(*) from users WHERE username = ?', (name,))
     if data == [(0,)]:
         return False
 
     return True
+
+
+def email_exists(email: str):
+    data = read_query('SELECT COUNT(*) from users WHERE email = ?', (email,))
+    if data == [(0,)]:
+        return False
+
+    return True
+
+
+def give_user_info(user_id: int):
+    data = read_query('SELECT id, username, password, email FROM users WHERE id = ?', (user_id,))
+
+    return [User.from_query_result(*row) for row in data]
