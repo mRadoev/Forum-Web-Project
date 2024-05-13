@@ -25,15 +25,17 @@ class Topic(BaseModel):
     description: constr(min_length=1)
     category_id: str | int
     replies: list = []
+    best_reply: list = []
 
     @classmethod
-    def from_query_result(cls, id, title, description, category_id, replies=None):
+    def from_query_result(cls, id, title, description, category_id, replies=None, best_reply=None):
         return cls(
             id=id,
             title=title,
             description=description,
             category_id=category_id,
-            replies=replies or []
+            replies=replies or [],
+            best_reply=best_reply or []
         )
 
 
@@ -42,14 +44,27 @@ class Reply(BaseModel):
     name: constr(min_length=1)
     description: constr(min_length=1)
     topics_id: Optional[int] = None
+    votes: list = []
 
     @classmethod
-    def from_query_result(cls, id, name, topics_id, description):
+    def from_query_result(cls, id, name, topics_id, description, votes=None):
         return cls(
             id=id,
             name=name,
             description=description,
             topics_id=topics_id,
+            votes=votes or []
+        )
+
+
+class Vote(BaseModel):
+    type: conint(ge=0, le=1)
+
+    @classmethod
+    def from_query_result(cls, likes, dislikes):
+        return cls(
+            likes=likes,
+            dislikes=dislikes
         )
 
 
@@ -65,8 +80,6 @@ class User(BaseModel):
     password: str
     email: str
 
-    # def is_admin(self):
-    #     return self.role == Role.ADMIN
 
     @classmethod
     def from_query_result(cls, id, username, password, email):
@@ -77,17 +90,27 @@ class User(BaseModel):
             email=email)
 
 
-class Message:
-    def __init__(self, id: int, sender_id: int, recipient_id: int, message: str, timestamp: datetime):
-        self.id = id
-        self.sender_id = sender_id
-        self.recipient_id = recipient_id
-        self.message = message
-        self.timestamp = timestamp
+class Conversation(BaseModel):
+    user1_id: int
+    user2_id: int
+
+
+class Message(BaseModel):
+    message_id: int | None = None
+    sender_id: int
+    recipient_id: int
+    message_text: str
 
     @classmethod
-    def from_query_result(cls, id: int, sender_id: int, recipient_id: int, message: str, timestamp: datetime):
-        return cls(id, sender_id, recipient_id, message, timestamp)
+    def from_query_result(cls, message_id, sender_id, recipient_id, message_text):
+        return cls(
+            message_id=message_id,
+            sender_id=sender_id,
+            recipient_id=recipient_id,
+            message_text=message_text)
 
-    def __repr__(self):
-        return f"Message(id={self.id}, sender_id={self.sender_id}, recipient_id={self.recipient_id}, message={self.message}, timestamp={self.timestamp})"
+
+class MessagePayload(BaseModel):
+    recipient_id: int
+    message_text: str
+
