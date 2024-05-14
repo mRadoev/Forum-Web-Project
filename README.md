@@ -1,7 +1,8 @@
 # Web-Project
 ### Database Schema
 
-**SQL Schema**
+![image](https://github.com/mRadoev/Web-Project/assets/155682021/dd0d9200-8973-4327-af99-011a681eb976)
+
 
 ### Project Environment
 
